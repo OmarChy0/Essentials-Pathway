@@ -200,3 +200,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 0.5
   onCollectEffect: {fileID: 9163842254569548763, guid: 3eed43ae6a7284ee4bf43fb2fec8342b, type: 3}
+  soundFx: {fileID: 8300000, guid: 9217f9fb9c9914260b4ccb50d76d9fc9, type: 3}

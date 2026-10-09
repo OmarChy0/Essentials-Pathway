@@ -1,20 +1,32 @@
 using UnityEngine;
 using TMPro;
-using System; // Required for Type handling
+using System;
 
 public class UpdateCollectibleCount : MonoBehaviour
 {
-    private TextMeshProUGUI collectibleText; // Reference to the TextMeshProUGUI component
+    private TextMeshProUGUI collectibleText;
+
+    public GameObject victoryEffect;
+
+    private bool victoryStarted = false;
 
     void Start()
     {
         collectibleText = GetComponent<TextMeshProUGUI>();
+
         if (collectibleText == null)
         {
             Debug.LogError("UpdateCollectibleCount script requires a TextMeshProUGUI component on the same GameObject.");
             return;
         }
-        UpdateCollectibleDisplay(); // Initial update on start
+
+        // Hide victory effect at the beginning
+        if (victoryEffect != null)
+        {
+            victoryEffect.SetActive(false);
+        }
+
+        UpdateCollectibleDisplay();
     }
 
     void Update()
@@ -28,6 +40,7 @@ public class UpdateCollectibleCount : MonoBehaviour
 
         // Check and count objects of type Collectible
         Type collectibleType = Type.GetType("Collectible");
+
         if (collectibleType != null)
         {
 #if UNITY_6000_3_OR_NEWER
@@ -37,8 +50,9 @@ public class UpdateCollectibleCount : MonoBehaviour
 #endif
         }
 
-        // Optionally, check and count objects of type Collectible2D as well if needed
+        // Check and count objects of type Collectible2D
         Type collectible2DType = Type.GetType("Collectible2D");
+
         if (collectible2DType != null)
         {
 #if UNITY_6000_3_OR_NEWER
@@ -48,7 +62,33 @@ public class UpdateCollectibleCount : MonoBehaviour
 #endif
         }
 
-        // Update the collectible count display
-        collectibleText.text = $"Collectibles remaining: {totalCollectibles}";
+        // Update the text
+        if (totalCollectibles > 0)
+        {
+            collectibleText.text = $"Collectibles remaining: {totalCollectibles}";
+        }
+
+        // All collectibles collected
+        if (totalCollectibles == 0 && !victoryStarted)
+        {
+            victoryStarted = true;
+
+            // Change text to VICTORY
+            collectibleText.text = "VICTORY!";
+
+            // Show victory particle effect
+            if (victoryEffect != null)
+            {
+                victoryEffect.SetActive(true);
+
+                // Play the particle system
+                ParticleSystem particles = victoryEffect.GetComponent<ParticleSystem>();
+
+                if (particles != null)
+                {
+                    particles.Play();
+                }
+            }
+        }
     }
 }
